@@ -13,6 +13,7 @@ ifeq ($(CI),)
 	@for pkg in $(BREW_PACKAGES); do \
 		brew list $$pkg &>/dev/null || (echo "Installing $$pkg..." && brew install $$pkg); \
 	done
+	@brew list sass &>/dev/null || (echo "Installing sass (dart-sass)..." && brew install sass/sass/sass)
 
 	@$(call PRINT_STEP,creating python venv)
 	@uv venv -p 3.12

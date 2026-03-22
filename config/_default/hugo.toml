@@ -9,7 +9,7 @@ paginate = 6
 enableRobotsTXT = true
 
 [permalinks]
-  pages = ':contentbasename/'
+  pages = ':filename/'
 
 # If you want to use disqus, uncomment the line below
 # disqusShortname = "yourdiscussshortname"

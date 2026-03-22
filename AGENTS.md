@@ -9,7 +9,7 @@ No JavaScript/TypeScript framework. No test suite. Go module: `lebi.me`.
 
 | Layer      | Technology                                          |
 | ---------- | --------------------------------------------------- |
-| SSG        | Hugo 0.158.0+ extended (local) · 0.124.1 (CI-pinned) |
+| SSG        | Hugo 0.158.0+ extended (local) · 0.158.0 (CI-pinned) |
 | Theme      | `github.com/onweru/newsroom` (Go module)            |
 | Runtime    | Go 1.21.6 (`go.mod`)                               |
 | Styles     | Dart Sass — `.sass` indented syntax                 |
@@ -195,7 +195,7 @@ pre-commit run --all-files   # equivalent
 ## CI / Deployment
 
 - GitHub Actions: `.github/workflows/ci.yml`, triggers on push to `main`
-- CI pins Hugo at **0.124.1** (`HUGO_VERSION` in `ci.yml`) — local dev uses 0.158.0+
+- CI pins Hugo at **0.158.0** (`HUGO_VERSION` in `ci.yml`) — matches local dev
 - CI build: `make init && hugo --gc --minify --baseURL "$BASE_URL"`
 - Output: `./public/` → GitHub Pages
 

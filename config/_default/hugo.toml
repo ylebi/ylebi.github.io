@@ -1,4 +1,4 @@
-baseURL = "https://lebi.com/"
+baseURL = "https://lebi.me/"
 languageCode = 'en-us'
 title = "Lebi's reflections"
 # this example loads the theme as hugo module

@@ -1,91 +1,79 @@
 # AGENTS.md — Coding Agent Guidelines
 
-This is a **Hugo** static site (personal blog) deployed to GitHub Pages.
+Hugo static site (personal blog) deployed to GitHub Pages.
 No JavaScript/TypeScript framework. No test suite. Go module: `lebi.me`.
 
 ---
 
 ## Stack
 
-| Layer       | Technology                             |
-| ----------- | -------------------------------------- |
-| SSG         | Hugo 0.124.1 (extended)                |
-| Theme       | `github.com/onweru/newsroom` (Go module) |
-| Runtime     | Go 1.21.6 (`go.mod`)                  |
-| Styles      | Sass (`.sass` indented syntax)         |
-| Templates   | Go HTML templates                      |
-| Formatting  | Prettier (HTML/CSS/YAML/MD), Black (Python in docs) |
-| Linting     | pre-commit hooks                       |
+| Layer      | Technology                                          |
+| ---------- | --------------------------------------------------- |
+| SSG        | Hugo 0.158.0+ extended (local) · 0.124.1 (CI-pinned) |
+| Theme      | `github.com/onweru/newsroom` (Go module)            |
+| Runtime    | Go 1.21.6 (`go.mod`)                               |
+| Styles     | Dart Sass — `.sass` indented syntax                 |
+| Templates  | Go HTML templates                                   |
+| Formatting | Prettier (HTML/CSS/Sass/YAML/MD) · Black (Python)   |
+| Linting    | pre-commit (`fail_fast: true`)                      |
 
 ---
 
 ## Commands
 
 ```bash
-# Install all local dependencies (brew packages, python venv)
-make init
+make init          # Install brew deps (incl. Dart Sass), python venv
+make devserver     # hugo server --disableFastRender -e production --bind 0.0.0.0 --ignoreCache
+make lint          # pre-commit run --all-files
+make update        # Update theme Go module + pre-commit hooks
 
-# Start local dev server (hot-reload, production env)
-make devserver
-# Equivalent: hugo server --disableFastRender -e production --bind 0.0.0.0 --ignoreCache
-
-# Run all linters / formatters
-make lint
-# Equivalent: pre-commit run --all-files
-
-# Update theme submodule + pre-commit hooks
-make update
-
-# Production build (output to ./public/)
-hugo --gc --minify
-
-# Build with explicit base URL (used in CI)
-hugo --gc --minify --baseURL "https://lebi.me/"
+hugo --gc --minify                              # Production build → ./public/
+hugo --gc --minify --baseURL "https://lebi.me/" # CI build
 ```
 
-> **No test commands.** There is no test suite in this project.
+> **No test suite.** `make lint` is the only verification step before committing.
 
 ---
 
 ## Directory Structure
 
 ```
-.
-├── archetypes/         # Content templates (hugo new)
+├── archetypes/         # hugo new templates (default.md)
 ├── assets/sass/        # Custom Sass overrides (_syntax.sass)
-├── config/_default/    # Hugo config split into TOML files
-│   ├── hugo.toml       # Site-level settings (title, theme, paginate)
-│   ├── markup.toml     # Goldmark/highlight settings
-│   └── params.toml     # Theme params (GA, keywords, blogDir)
+├── config/_default/    # Split Hugo config (TOML)
+│   ├── hugo.toml       # baseURL, theme, paginate=6
+│   ├── markup.toml     # Goldmark + highlight (lineNos=true, tabWidth=2)
+│   └── params.toml     # GA, keywords, blogDir="posts"
 ├── content/
-│   ├── _index.md       # Home page front matter
-│   ├── pages/          # Static pages (about.md, etc.)
-│   └── posts/          # Blog posts (Markdown)
-├── data/
-│   └── menu.yml        # Navigation menu items
+│   ├── _index.md       # Home page
+│   ├── pages/          # Static pages (about, etc.)
+│   └── posts/          # Blog posts
+├── data/menu.yml       # Nav items (YAML)
 ├── layouts/
-│   ├── _default/       # Base templates (baseof.html, single.html)
-│   └── partials/       # Reusable partials (head.html, footer.html)
-├── static/             # Copied verbatim to /public (images, JS, ads.txt)
-└── themes/             # Git submodule for theme overrides (if any)
+│   ├── index.html      # Theme override: Pager.PagerSize fix
+│   ├── _default/       # baseof.html, single.html
+│   └── partials/
+│       ├── head.html   # Custom: GA, AdSense, GTM tags
+│       └── styles.html # Theme override: css.Sass fix
+└── static/             # Verbatim copy to /public (images/, js/)
 ```
 
 ---
 
-## Content Authoring (Markdown Posts)
+## Content Authoring
 
 ### Front Matter
 
-All content uses **TOML** front matter (between `+++` delimiters):
+All content uses **TOML** front matter (`+++` delimiters):
 
 ```toml
 +++
-title = "Your Post Title"
-date = "2024-04-20"
-image = "/images/your-image.webp"
+title = "Monitoring and Logging for Memcached-Operator"
+date = "2024-05-16"
+image = "/images/monitoring-and-logging-for-memcached-operator.webp"
 tags = [
-  "tag-one",
-  "tag-two",
+  "kubernetes",
+  "operator",
 ]
 categories = [
   "Development",
@@ -93,22 +81,20 @@ categories = [
 +++
 ```
 
-- `draft = true` hides posts from production builds
-- `image` path is relative to `static/`
-- Use `.webp` for post cover images where possible
-- `date` format: `"YYYY-MM-DD"` or RFC3339 for pages
+- `draft = true` hides from production; remove when publishing
+- `image` path is relative to `static/`; use `.webp`
+- `date`: `"YYYY-MM-DD"` for posts, RFC3339 for pages
+- Tags/categories: lowercase, hyphen-separated
 
-### Creating a New Post
+### New Post
 
 ```bash
-hugo new content posts/my-post-title.md
+hugo new content posts/my-post-title.md   # uses archetypes/default.md
 ```
 
-This uses `archetypes/default.md` as the template.
+### Code Blocks
 
-### Code Blocks in Posts
-
-Use fenced code blocks with language identifiers. Tab width is **2 spaces**:
+Fenced with language identifier. Tab width = **2 spaces** (`markup.toml`):
 
 ````markdown
 ```go
@@ -116,72 +102,47 @@ func main() {
   fmt.Println("Hello")
 }
 ```
-
-```bash
-hugo server
-```
-
-```yaml
-key: value
-```
 ````
 
-Python code blocks are formatted by `blacken-docs` at 79 chars line length.
+Python snippets in Markdown are auto-formatted by `blacken-docs` at 79 chars — do not manually format them.
 
 ---
 
-## Hugo Templates (layouts/)
+## Hugo Templates
 
-Templates use **Go HTML template syntax**. Key conventions:
+### Patterns
 
 ```html
-<!-- Cached partials (no page-specific data needed) -->
-{{ partialCached "nav" . }}
-
-<!-- Non-cached partials (page-specific data) -->
-{{ partial "opengraph" . }}
-
-<!-- Block/define pattern in baseof.html -->
-{{ block "main" . }}{{ end }}
+{{ partialCached "styles" . }}   <!-- cached: no per-page data -->
+{{ partial "opengraph" . }}      <!-- not cached: page-specific data -->
+{{ block "main" . }}{{ end }}    <!-- baseof.html block/define pattern -->
 ```
 
-- Partial files live in `layouts/partials/`
-- Override theme partials by placing a file at the same relative path under `layouts/partials/`
-- Use `partialCached` for partials that don't vary per page (nav, footer, styles)
-- Theme overrides: copy the theme file to the same path under `layouts/` and modify it
+### Theme Override Pattern
 
----
+The `newsroom` theme loads as a **Go module** — never edit module cache or `themes/`.
+Override by mirroring the path under `layouts/` or `assets/`:
 
-## Config Files (TOML)
-
-Hugo config is split under `config/_default/`. Use TOML format:
-
-```toml
-# hugo.toml — site-level
-baseURL = "https://lebi.me/"
-theme = ["github.com/onweru/newsroom"]
-paginate = 6
+```
+Theme:    github.com/onweru/newsroom/layouts/partials/styles.html
+Override: layouts/partials/styles.html   ← local file takes precedence
 ```
 
-**Do not** inline all config into a single `hugo.toml` at the root — keep it split.
+### Hugo API Compatibility (theme is outdated — use current API in overrides)
 
----
+| Removed API              | Replacement          | Since       |
+| ------------------------ | -------------------- | ----------- |
+| `resources.ToCSS $opts`  | `css.Sass $opts`     | Hugo 0.128.0 |
+| `$pager.PageSize`        | `$pager.PagerSize`   | Hugo 0.125.0 |
+| `:filename` permalink    | `:contentbasename`   | Hugo 0.144.0 |
 
-## Data Files (YAML)
-
-Data files under `data/` use YAML:
-
-```yaml
-# data/menu.yml
-- item: About
-  url: about/
-```
+**Dart Sass is required** for `css.Sass`. `make init` installs it via `brew install sass/sass/sass`.
 
 ---
 
 ## Sass (assets/sass/)
 
-Uses **indented Sass syntax** (`.sass`), not SCSS:
+**Indented `.sass` syntax** — no braces, no semicolons, 2-space indent:
 
 ```sass
 .highlight
@@ -193,54 +154,59 @@ Uses **indented Sass syntax** (`.sass`), not SCSS:
     border-radius: 4px
 ```
 
-- No braces, no semicolons
-- 2-space indentation
-- CSS custom properties (`var(--bg)`, `var(--accent)`, `var(--text)`) for theme colors
+Theme CSS custom properties for colors: `var(--bg)`, `var(--text)`, `var(--accent)`, `var(--theme)`, `var(--light)`, `var(--dark)`.
+
+---
+
+## Config Conventions
+
+**Hugo config** — TOML, split under `config/_default/`. Do not collapse to a single root file.
+
+**Data files** — YAML under `data/`:
+
+```yaml
+- item: About
+  url: about/
+```
 
 ---
 
 ## Formatting & Linting
 
-Managed by **pre-commit**. Always run before committing:
-
 ```bash
-make lint
-# or directly:
-pre-commit run --all-files
+make lint                    # run all pre-commit hooks on all files
+pre-commit run --all-files   # equivalent
 ```
 
-### Active Hooks
+| Hook                  | What it enforces                             |
+| --------------------- | -------------------------------------------- |
+| `check-yaml`          | Valid YAML syntax                            |
+| `end-of-file-fixer`   | Single trailing newline                      |
+| `trailing-whitespace` | No trailing spaces                           |
+| `black`               | Python code style                            |
+| `blacken-docs`        | Python in Markdown (79-char line limit)      |
+| `prettier`            | HTML, CSS, Sass, YAML, Markdown formatting   |
 
-| Hook                  | What it checks/fixes                              |
-| --------------------- | ------------------------------------------------- |
-| `check-yaml`          | Valid YAML syntax                                 |
-| `end-of-file-fixer`   | Files end with a single newline                   |
-| `trailing-whitespace` | No trailing spaces                                |
-| `black`               | Python code style                                 |
-| `blacken-docs`        | Python in markdown code blocks (max 79 chars)     |
-| `prettier`            | HTML, CSS, Sass, YAML, Markdown formatting        |
-
-**Prettier** handles indentation, line length, and quote style for all markup files.
-Do not manually reformat files — let `make lint` do it.
+**Do not manually reformat files.** Prettier owns indentation, quotes, and line length.
+`fail_fast: true` — hooks stop on the first failure.
 
 ---
 
 ## CI / Deployment
 
-- **CI**: GitHub Actions (`.github/workflows/ci.yml`)
-- Deploys on push to `main`
-- Build command in CI: `make init && hugo --gc --minify --baseURL "$BASE_URL"`
-- Artifact: `./public/` directory → GitHub Pages
+- GitHub Actions: `.github/workflows/ci.yml`, triggers on push to `main`
+- CI pins Hugo at **0.124.1** (`HUGO_VERSION` in `ci.yml`) — local dev uses 0.158.0+
+- CI build: `make init && hugo --gc --minify --baseURL "$BASE_URL"`
+- Output: `./public/` → GitHub Pages
 
-Do not commit the `public/` directory (it's in `.gitignore`).
+Do not commit `public/` (in `.gitignore`).
 
 ---
 
 ## Key Constraints
 
-- **No TypeScript or JavaScript build step** — inline `<script>` tags only
-- **No npm / package.json** — dependencies managed by Homebrew + Go modules
-- **Theme is a Go module** — update via `make update`, not by editing files inside `themes/`
-- **Override theme** by mirroring the file path under `layouts/` or `assets/`, not editing the theme directly
-- **Images** go in `static/images/`; prefer `.webp` format
-- **Never commit** without running `make lint` first (pre-commit will catch issues)
+- **No JS build step** — inline `<script>` tags only; no npm/package.json
+- **No editing theme source** — use `layouts/`/`assets/` overrides; update via `make update`
+- **Dart Sass required** — `make init` installs it; `css.Sass` fails without it
+- **Images** → `static/images/`, prefer `.webp`
+- **Always run `make lint` before committing** — pre-commit will block malformatted files

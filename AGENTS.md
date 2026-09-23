@@ -9,15 +9,15 @@ No JavaScript/TypeScript framework. No test suite. Go module: `lebi.me`.
 
 ## Stack
 
-| Layer      | Technology                                           |
-| ---------- | ---------------------------------------------------- |
-| SSG        | Hugo 0.158.0 extended (local + CI-pinned)            |
-| Theme      | `github.com/onweru/newsroom` (Go module, `go.mod`)   |
-| Runtime    | Go 1.21.6                                            |
-| Styles     | Dart Sass 1.98.0 — `.sass` indented syntax           |
-| Templates  | Go HTML templates                                    |
-| Formatting | Prettier v4.0.0-alpha.8 · Black 24.4.0               |
-| Linting    | pre-commit (`fail_fast: true`)                       |
+| Layer      | Technology                                         |
+| ---------- | -------------------------------------------------- |
+| SSG        | Hugo 0.158.0 extended (local + CI-pinned)          |
+| Theme      | `github.com/onweru/newsroom` (Go module, `go.mod`) |
+| Runtime    | Go 1.21.6                                          |
+| Styles     | Dart Sass 1.98.0 — `.sass` indented syntax         |
+| Templates  | Go HTML templates                                  |
+| Formatting | Prettier v4.0.0-alpha.8 · Black 24.4.0             |
+| Linting    | pre-commit (`fail_fast: true`)                     |
 
 ---
 
@@ -70,18 +70,18 @@ hugo --gc --minify --baseURL "https://lebi.me/"  # CI build (baseURL from Pages 
 
 ## WHERE TO LOOK
 
-| Task                        | Location                              | Notes                                      |
-| --------------------------- | ------------------------------------- | ------------------------------------------ |
-| Add/edit blog post          | `content/posts/`                      | `hugo new content posts/slug.md`           |
-| Change nav links            | `data/menu.yml`                       | YAML                                       |
-| Change site title/GA/logo   | `config/_default/params.toml`         |                                            |
-| Change paginate/baseURL     | `config/_default/hugo.toml`           |                                            |
-| Change code highlight style | `assets/sass/_syntax.sass`            | Indented `.sass` syntax                    |
-| Add `<head>` tags           | `layouts/partials/head.html`          |                                            |
-| Override theme template     | Mirror path under `layouts/`          | Never edit `themes/` or module cache       |
-| Add i18n string             | `i18n/en.toml`                        | Overrides theme strings                    |
-| Change footer               | `layouts/partials/footer.html`        |                                            |
-| Tweak copy-code button      | `static/js/copy-code-button.js`       | Loaded conditionally by `single.html`      |
+| Task                        | Location                        | Notes                                 |
+| --------------------------- | ------------------------------- | ------------------------------------- |
+| Add/edit blog post          | `content/posts/`                | `hugo new content posts/slug.md`      |
+| Change nav links            | `data/menu.yml`                 | YAML                                  |
+| Change site title/GA/logo   | `config/_default/params.toml`   |                                       |
+| Change paginate/baseURL     | `config/_default/hugo.toml`     |                                       |
+| Change code highlight style | `assets/sass/_syntax.sass`      | Indented `.sass` syntax               |
+| Add `<head>` tags           | `layouts/partials/head.html`    |                                       |
+| Override theme template     | Mirror path under `layouts/`    | Never edit `themes/` or module cache  |
+| Add i18n string             | `i18n/en.toml`                  | Overrides theme strings               |
+| Change footer               | `layouts/partials/footer.html`  |                                       |
+| Tweak copy-code button      | `static/js/copy-code-button.js` | Loaded conditionally by `single.html` |
 
 ---
 
@@ -122,8 +122,10 @@ Override: layouts/partials/styles.html   ← local file takes precedence
 ### Partial Caching Rule
 
 ```html
-{{ partialCached "styles" . }}   <!-- no per-page data → cacheable -->
-{{ partial "opengraph" . }}      <!-- page-specific data → NOT cached -->
+{{ partialCached "styles" . }}
+<!-- no per-page data → cacheable -->
+{{ partial "opengraph" . }}
+<!-- page-specific data → NOT cached -->
 ```
 
 ### Hugo API Compatibility (theme is outdated — use current API in overrides)

@@ -30,18 +30,29 @@ After customizing, click on "Save and get code." Copy the generated AdSense code
 Open your Hugo website's source code in your preferred code editor. Navigate to the layout file where you want to display AdSense ads, such as `layouts/partials/footer.html` for a footer ad.
 
 ```html
-  <!-- Start of Google AdSense -->
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXX"
-     crossorigin="anonymous"></script>
-  <!-- End of Google AdSense -->     
-  <!-- Google Tag Manager -->
-  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-XXXXXXXXXXXXXXX');</script>
-  <!-- End Google Tag Manager --> 
+<!-- Start of Google AdSense -->
+<script
+  async
+  src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXX"
+  crossorigin="anonymous"
+></script>
+<!-- End of Google AdSense -->
+<!-- Google Tag Manager -->
+<script>
+  (function (w, d, s, l, i) {
+    w[l] = w[l] || [];
+    w[l].push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
+    var f = d.getElementsByTagName(s)[0],
+      j = d.createElement(s),
+      dl = l != "dataLayer" ? "&l=" + l : "";
+    j.async = true;
+    j.src = "https://www.googletagmanager.com/gtm.js?id=" + i + dl;
+    f.parentNode.insertBefore(j, f);
+  })(window, document, "script", "dataLayer", "GTM-XXXXXXXXXXXXXXX");
+</script>
+<!-- End Google Tag Manager -->
 ```
+
 Paste the copied AdSense code snippet into the appropriate location within the HTML code. Save the changes.
 
 ## Step 4: Test Your Changes

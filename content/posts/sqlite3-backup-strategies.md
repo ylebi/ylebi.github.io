@@ -176,13 +176,13 @@ Why Makefile and not just an alias or a shell function? A few reasons:
 
 ## SQLite Backup Methods Compared
 
-| Method | WAL-safe | Works on live DB | Atomic | Notes |
-|---|---|---|---|---|
-| `sqlite3 .backup` | Yes | Yes | Yes | Recommended for all production use |
-| `cp` | No | No | No | Only safe if DB is closed and no WAL |
-| `VACUUM INTO` | Yes | Yes | Yes | Compacts while copying; slower |
-| SQLite Backup API (C/Go) | Yes | Yes | Yes | Same as `.backup`, programmatic |
-| `rsync` | No | No | No | Same failure modes as `cp` |
+| Method                   | WAL-safe | Works on live DB | Atomic | Notes                                |
+| ------------------------ | -------- | ---------------- | ------ | ------------------------------------ |
+| `sqlite3 .backup`        | Yes      | Yes              | Yes    | Recommended for all production use   |
+| `cp`                     | No       | No               | No     | Only safe if DB is closed and no WAL |
+| `VACUUM INTO`            | Yes      | Yes              | Yes    | Compacts while copying; slower       |
+| SQLite Backup API (C/Go) | Yes      | Yes              | Yes    | Same as `.backup`, programmatic      |
+| `rsync`                  | No       | No               | No     | Same failure modes as `cp`           |
 
 `VACUUM INTO 'file.db'` is worth knowing about — it's an SQL command that creates a defragmented copy. Useful if your database has grown large due to deletions and you want to reclaim space. It's slower than `.backup` on very large files, and it's a full rewrite, not an incremental copy. For routine backups, `.backup` is faster and simpler.
 

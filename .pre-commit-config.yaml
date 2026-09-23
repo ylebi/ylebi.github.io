@@ -1,4 +1,5 @@
 fail_fast: true
+exclude: ^resources/_gen/
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.6.0
@@ -27,7 +28,7 @@ repos:
     rev: "v4.0.0-alpha.8" # Use the sha or tag you want to point at
     hooks:
       - id: prettier
-        entry: prettier --write .
+        entry: prettier --write
 
 ci:
   autofix_commit_msg: |
